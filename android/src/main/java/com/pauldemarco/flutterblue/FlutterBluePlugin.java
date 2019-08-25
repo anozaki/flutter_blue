@@ -725,6 +725,14 @@ public class FlutterBluePlugin implements MethodCallHandler, RequestPermissionsR
             for(BluetoothGattService s : gatt.getServices()) {
                 p.addServices(ProtoMaker.from(gatt.getDevice(), s, gatt));
             }
+            
+            /*
+            / Changes the MTU size to 512 in case LOLLIPOP and above devices
+            */
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                gatt.requestMtu(185);
+            }
+            
             invokeMethodUIThread("DiscoverServicesResult", p.build().toByteArray());
         }
 
