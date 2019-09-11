@@ -484,7 +484,12 @@ typedef NS_ENUM(NSUInteger, LogLevel) {
   }
   ProtosReadDescriptorResponse *result = [[ProtosReadDescriptorResponse alloc] init];
   [result setRequest:q];
-  int value = [descriptor.value intValue];
+  if ([descriptor.value isKindOfClass:[NSData class]]) {
+    [result setValue:descriptor.value];
+  } else {
+    int value = [descriptor.value intValue];
+    [result setValue:[NSData dataWithBytes:&value length:sizeof(value)]];
+  }
   [result setValue:[NSData dataWithBytes:&value length:sizeof(value)]];
   [_channel invokeMethod:@"ReadDescriptorResponse" arguments:[self toFlutterData:result]];
 
@@ -687,7 +692,12 @@ typedef NS_ENUM(NSUInteger, LogLevel) {
   [result setRemoteId:[peripheral.identifier UUIDString]];
   [result setCharacteristicUuid:[descriptor.characteristic.UUID fullUUIDString]];
   [result setServiceUuid:[descriptor.characteristic.service.UUID fullUUIDString]];
-  int value = [descriptor.value intValue];
+  if ([descriptor.value isKindOfClass:[NSData class]]) {
+    [result setValue:descriptor.value];
+  } else {
+    int value = [descriptor.value intValue];
+    [result setValue:[NSData dataWithBytes:&value length:sizeof(value)]];
+  }
   [result setValue:[NSData dataWithBytes:&value length:sizeof(value)]];
   return result;
 }
